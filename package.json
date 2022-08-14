@@ -19,8 +19,14 @@
   },
   "homepage": "https://github.com/IrenManhattan/express-mesto-gha#readme",
   "dependencies": {
+    "bcrypt": "^5.0.1",
+    "bcryptjs": "^2.4.3",
+    "celebrate": "^15.0.1",
     "express": "^4.18.1",
-    "mongoose": "^6.5.2"
+    "joi": "^17.6.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.5.2",
+    "validator": "^13.7.0"
   },
   "devDependencies": {
     "eslint": "^8.16.0",
