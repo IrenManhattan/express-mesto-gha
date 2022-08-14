@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const NotFoundError = require('./errors/NotFoundError');
 
 const { PORT = 3000 } = process.env;
 const { userRoutes } = require('./routes/users');
@@ -19,7 +20,7 @@ app.use(express.json());
 app.use('/users', userRoutes);
 app.use('/cards', cardRoutes);
 app.use((_, res) => {
-  res.status(404).send({ message: 'Страница не найдена' });
+  res.status(NotFoundError).send({ message: 'Страница не найдена' });
 });
 
 async function main() {

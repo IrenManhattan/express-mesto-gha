@@ -1,11 +1,15 @@
 const Card = require('../models/card');
 
+const NotFoundError = require('../errors/NotFoundError');
+const ValidationError = require('../errors/ValidationError');
+const ServerError = require('../errors/ServerError');
+
 const getCards = async (_, res) => {
   try {
     const users = await Card.find({});
     res.status(200).send(users);
   } catch (err) {
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка сервера',
     });
   }
@@ -19,12 +23,12 @@ const createCard = async (req, res) => {
       .send(await Card.create({ name, link, owner: req.user._id }));
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(400).send({
+      res.status(ValidationError).send({
         message: 'Ошибка введеных данных',
       });
       return;
     }
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка сервера',
     });
   }
@@ -34,16 +38,16 @@ const deleteCardId = async (req, res) => {
   try {
     const cardId = await Card.findByIdAndRemove(req.params.cardId);
     if (!cardId) {
-      res.status(404).send({
+      res.status(NotFoundError).send({
         message: 'Карточка не найдена',
       });
     }
     res.status(200).send(cardId);
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({ message: 'Невалидный id' });
+      res.status(ValidationError).send({ message: 'Невалидный id' });
     }
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка сервера',
     });
   }
@@ -57,7 +61,7 @@ const likeCard = async (req, res) => {
       { new: true },
     );
     if (!like) {
-      res.status(404).send({
+      res.status(NotFoundError).send({
         message: 'Карточка не найдена',
       });
       return;
@@ -65,12 +69,12 @@ const likeCard = async (req, res) => {
     res.status(200).send({ data: like });
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({
+      res.status(ValidationError).send({
         message: 'Переданы некорректные данные',
       });
       return;
     }
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка сервера',
     });
   }
@@ -84,7 +88,7 @@ const dislikeCard = async (req, res) => {
       { new: true },
     );
     if (!dislike) {
-      res.status(404).send({
+      res.status(NotFoundError).send({
         message: 'Карточка не найдена',
       });
       return;
@@ -92,12 +96,12 @@ const dislikeCard = async (req, res) => {
     res.status(200).send({ data: dislike });
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({
+      res.status(ValidationError).send({
         message: 'Переданы некорректные данные',
       });
       return;
     }
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка сервера',
     });
   }

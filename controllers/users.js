@@ -1,11 +1,15 @@
 const User = require('../models/user');
 
+const NotFoundError = require('../errors/NotFoundError');
+const ValidationError = require('../errors/ValidationError');
+const ServerError = require('../errors/ServerError');
+
 const getUsers = async (_, res) => {
   try {
     const users = await User.find({});
-    res.status(200).send(users);
+    res.send(users);
   } catch (err) {
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка сервера',
     });
   }
@@ -15,18 +19,18 @@ const getUserId = async (req, res) => {
   try {
     const userId = await User.findById(req.params.userId);
     if (!userId) {
-      res.status(404).send({ message: 'Пользователь не найден' });
+      res.status(NotFoundError).send({ message: 'Пользователь не найден' });
       return;
     }
     res.status(200).send({ data: userId });
   } catch (err) {
     if (err.name === 'CastError') {
-      res.status(400).send({
+      res.status(ValidationError).send({
         message: 'Пользователя с таким id нет',
       });
       return;
     }
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка сервера',
     });
   }
@@ -39,14 +43,14 @@ const createUser = async (req, res) => {
     res.status(201).send(await userCreate.save());
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(400).send({
+      res.status(ValidationError).send({
         message: `${Object.values(err.errors)
           .map((error) => error.message)
           .join(', ')}`,
       });
       return;
     }
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка сервера',
     });
   }
@@ -63,14 +67,14 @@ const updateUser = async (req, res) => {
     res.status(200).send(userUpdate);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(400).send({
+      res.status(ValidationError).send({
         message: `${Object.values(err.errors)
           .map((error) => error.message)
           .join(', ')}`,
       });
       return;
     }
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка в работе сервера',
     });
   }
@@ -87,12 +91,12 @@ const updateAvatar = async (req, res) => {
     res.status(200).send(userId);
   } catch (err) {
     if (err.name === 'ValidationError') {
-      res.status(400).send({
+      res.status(ValidationError).send({
         message: 'Переданы некорректные данные',
       });
       return;
     }
-    res.status(500).send({
+    res.status(ServerError).send({
       message: 'Произошла ошибка сервера',
     });
   }
