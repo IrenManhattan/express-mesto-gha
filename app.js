@@ -37,7 +37,7 @@ app.use('/users', auth, userRoutes);
 app.use('/cards', auth, cardRoutes);
 
 app.all('*', auth, (_req, _res, next) => {
-  next(new NotFoundError('Страница не  найдена'));
+  next(new NotFoundError('Страница не найдена'));
 });
 
 app.use(errors());
